@@ -15,7 +15,7 @@ class CountryScraper:
     def _get_cookie(self):
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ..."}
         resp=requests.get(f"{self.cookie_url}",headers=headers) #this variable will hold the HTTP response object
-        resp.raise_for_status() #checks the HTTP response's status code- does nothing if 200-299, if there's an error it raises a requests.HTTPerror exception
+        resp.raise_for_status() #checks the HTTP response's status code- does nothing if 200-299, if there's an error it raises a requests.HTTPerror exception and stops
         self.cookies={"user_cookie": resp.cookies.get("user_cookie")}
         return self.cookies
     
@@ -51,14 +51,17 @@ class CountryScraper:
             while self.retry_attempt < 3:
                 try:
                     response = requests.get(url, params={"country": country}, cookies=cookies, headers=headers)
-                    response.raise_for_status()
                     print(f"Raw JSON for {country}:", response.json())
-                    leaders = response.json()
+                    try:
+                        leaders = response.json()
+                    except ValueError:
+                        leaders={}
 
-                    if isinstance(leaders, dict) and "message" in leaders and "expired" in leaders["message"].lower():
+                    if response.status_code==403 or isinstance(leaders, dict) and "message" in leaders and "missing" in leaders["message"].lower():
                         print(f"Cookie expired for {country}, refreshing...")
                         cookies = self._get_cookie()
                         self.retry_attempt += 1
+                        print("Attempt number" + str(self.retry_attempt))
                         continue
 
                     for leader in leaders:

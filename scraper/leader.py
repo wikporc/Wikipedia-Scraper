@@ -7,7 +7,6 @@ import time
 class Leader:
     patterns=[r"\[\d+\]", #references like [42]
             r"<span.*?>.*?</span>", #<span> blocks - phonetic buttons, styling
-            r"\([^\)]*\)", #phonetic pronunciations
             r"[\u2460-\u24FF]", # Extra unicode symbols like ⓘ etc
             r"<.*?>" #HTML tags (if there are any)
             ]#this is a list that contains all the regex patterns to remove from the text for cleaning
