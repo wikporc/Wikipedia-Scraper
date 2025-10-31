@@ -1,6 +1,7 @@
 import requests
 
-url = "https://country-leaders.onrender.com/leaders?country=fr"  # change to "ma" to test Morocco
+url = "https://country-leaders.onrender.com/leaders?country=fr"  
+
 cookie_url='https://country-leaders.onrender.com/cookie'
 cookies=requests.get(f"{cookie_url}")
 cookies=cookies.cookies
